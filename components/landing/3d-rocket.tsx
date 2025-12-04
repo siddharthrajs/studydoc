@@ -1,21 +1,47 @@
-"use client"
+"use client";
 
-import { motion } from "motion/react"
+import { motion } from "motion/react";
+import { useEffect, useState } from "react";
 
 export function Rocket3D() {
+  const [smokeParticles, setSmokeParticles] = useState<
+    { x: number; y: number }[]
+  >([]);
+  const [stars, setStars] = useState<
+    { top: string; left: string; duration: number; delay: number }[]
+  >([]);
+
+  useEffect(() => {
+    setSmokeParticles(
+      [...Array(8)].map(() => ({
+        x: (Math.random() - 0.5) * 60,
+        y: 80 + Math.random() * 40,
+      }))
+    );
+
+    setStars(
+      [...Array(6)].map(() => ({
+        top: `${Math.random() * 100}%`,
+        left: `${Math.random() * 100}%`,
+        duration: 1 + Math.random(),
+        delay: Math.random() * 2,
+      }))
+    );
+  }, []);
+
   return (
     <div className="relative w-48 h-64">
       {/* Rocket Body */}
       <motion.div
         className="absolute inset-0"
-        animate={{ 
+        animate={{
           y: [-10, 10, -10],
-          rotate: [-2, 2, -2]
+          rotate: [-2, 2, -2],
         }}
-        transition={{ 
+        transition={{
           duration: 3,
           repeat: Infinity,
-          ease: "easeInOut"
+          ease: "easeInOut",
         }}
       >
         {/* Main Body */}
@@ -23,19 +49,19 @@ export function Rocket3D() {
           {/* Window */}
           <motion.div
             className="absolute top-8 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 border-4 border-gray-300 shadow-inner"
-            animate={{ 
+            animate={{
               boxShadow: [
                 "inset 0 0 20px rgba(0,255,255,0.3)",
                 "inset 0 0 30px rgba(0,255,255,0.6)",
-                "inset 0 0 20px rgba(0,255,255,0.3)"
-              ]
+                "inset 0 0 20px rgba(0,255,255,0.3)",
+              ],
             }}
             transition={{ duration: 2, repeat: Infinity }}
           >
             {/* Window Reflection */}
             <div className="absolute top-1 left-1 w-3 h-3 rounded-full bg-white/50" />
           </motion.div>
-          
+
           {/* Body Stripes */}
           <div className="absolute bottom-4 left-0 right-0 h-3 bg-gradient-to-r from-red-500 via-red-600 to-red-500" />
           <div className="absolute bottom-8 left-0 right-0 h-1 bg-gradient-to-r from-red-400 via-red-500 to-red-400" />
@@ -48,7 +74,7 @@ export function Rocket3D() {
 
         {/* Left Fin */}
         <div className="absolute bottom-0 left-[calc(50%-40px)] w-8 h-16 bg-gradient-to-r from-red-600 to-red-500 rounded-bl-full transform -skew-x-12 origin-top-right" />
-        
+
         {/* Right Fin */}
         <div className="absolute bottom-0 right-[calc(50%-40px)] w-8 h-16 bg-gradient-to-l from-red-600 to-red-500 rounded-br-full transform skew-x-12 origin-top-left" />
 
@@ -59,26 +85,26 @@ export function Rocket3D() {
       {/* Flame */}
       <motion.div
         className="absolute bottom-[-40px] left-1/2 -translate-x-1/2"
-        animate={{ 
+        animate={{
           y: [-10, 10, -10],
-          rotate: [-2, 2, -2]
+          rotate: [-2, 2, -2],
         }}
-        transition={{ 
+        transition={{
           duration: 3,
           repeat: Infinity,
-          ease: "easeInOut"
+          ease: "easeInOut",
         }}
       >
         <motion.div
           className="relative"
-          animate={{ 
+          animate={{
             scaleY: [1, 1.2, 0.9, 1.1, 1],
-            scaleX: [1, 0.9, 1.1, 0.95, 1]
+            scaleX: [1, 0.9, 1.1, 0.95, 1],
           }}
-          transition={{ 
+          transition={{
             duration: 0.3,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: "easeInOut",
           }}
         >
           {/* Outer Flame */}
@@ -91,51 +117,51 @@ export function Rocket3D() {
       </motion.div>
 
       {/* Smoke Particles */}
-      {[...Array(8)].map((_, i) => (
+      {smokeParticles.map((particle, i) => (
         <motion.div
           key={i}
           className="absolute bottom-[-60px] left-1/2 w-4 h-4 rounded-full bg-gray-400/30"
-          initial={{ 
+          initial={{
             x: 0,
             y: 0,
             scale: 0.5,
-            opacity: 0.8
+            opacity: 0.8,
           }}
-          animate={{ 
-            x: (Math.random() - 0.5) * 60,
-            y: 80 + Math.random() * 40,
+          animate={{
+            x: particle.x,
+            y: particle.y,
             scale: 2,
-            opacity: 0
+            opacity: 0,
           }}
-          transition={{ 
+          transition={{
             duration: 1.5,
             repeat: Infinity,
             delay: i * 0.2,
-            ease: "easeOut"
+            ease: "easeOut",
           }}
         />
       ))}
 
       {/* Stars */}
-      {[...Array(6)].map((_, i) => (
+      {stars.map((star, i) => (
         <motion.div
           key={i}
           className="absolute w-1 h-1 rounded-full bg-white"
           style={{
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
+            top: star.top,
+            left: star.left,
           }}
-          animate={{ 
+          animate={{
             opacity: [0.3, 1, 0.3],
-            scale: [1, 1.5, 1]
+            scale: [1, 1.5, 1],
           }}
-          transition={{ 
-            duration: 1 + Math.random(),
+          transition={{
+            duration: star.duration,
             repeat: Infinity,
-            delay: Math.random() * 2
+            delay: star.delay,
           }}
         />
       ))}
     </div>
-  )
+  );
 }
